@@ -5,11 +5,16 @@ require("./db/mongoose");
 // Creating express object
 const app = express();
 
-const cors = require("cors");
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-app.use(cors());
 
+
+// middleware body parser
+app.use(express.json({extended:false}))
+
+// Define Routes
+app.use('/api/users',require('./router/user'));
+app.use('/api/auth',require('./router/auth'));
+app.use('/api/characters',require('./router/character'));
+//app.use('/api/relations',require('./routes/api/relation'));
 
 
 

@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const characterSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true
   },
-  
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'users'
+},
   age: {
     type: Number,
     required: true
@@ -25,7 +29,7 @@ const characterSchema = new mongoose.Schema({
   },
   relations: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Relation'
+    ref: 'Relations'
   }],
  
 });

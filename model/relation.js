@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const relationSchema = new mongoose.Schema({
     idCharacter:{
-    type: objectId,
+      type: Schema.Types.ObjectId,
+      ref: 'Characters',
     required: true
   },
     name: {
