@@ -107,23 +107,49 @@ router.delete('/:id',[auth,checkObjectId('id')],async(req,res)=>{
 router.put('/relation/:id', auth, checkObjectId('id'), async (req, res) => {
     try {
         const character = await Character.findById(req.params.id);
-  
+
+
+        const tempRel = await Relation.find({idCharacter: req.body.idCharacter});
+       
+         //Pull out relation
+           
+           
+                character.relations.forEach(async(relation)=>{
+                const t = await Relation.findById(relation);
+                    
+                // Make sure Relation dose not exsit
+      
+                    if(t.idCharacter.toString() === req.body.idCharacter){
+                      
+                     
+                        return res.status(404).json({msg: "Relation Already exsit"});
+                         
+                    }    
+        
+                   
+            })
+                
         const newRelation = new Relation({
             name: req.body.name,
-            id: character.id,
-            description: req.body.age,
+            idCharacter: req.body.idCharacter,
+            description: req.body.description,
         });
 
         const relation = await newRelation.save();
+       
 
-        res.send(character);
+        character.relations.unshift(relation);
+        await character.save();
+      //  res.send(character);
   
       
-      await character.save();
+      
   
-      return res.json(character.relation);
-    } catch (err) {
-      console.error(err.message);
+      return res.json(character.relations);
+    
+            
+              } catch (err) {
+      console.error(err);
       res.status(500).send('Server Error');
     }
   });
