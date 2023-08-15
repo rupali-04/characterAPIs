@@ -23,7 +23,7 @@ check('occupation',"Occupation is required").not().isEmpty(),
 
    
         const user = await User.findById(req.user.id).select('-password');
-
+        console.log("Add",req.body);
         const newCharacter = new Character({
             name: req.body.name,
             user: req.user.id,
@@ -101,6 +101,60 @@ router.delete('/:id',[auth,checkObjectId('id')],async(req,res)=>{
     }
 });
 
+// @desc      Upload photo for Character
+// @route     PUT /api/characterss/:id/photo
+// @access    Private
+router.put('/:id/photo',[auth,checkObjectId('id')],async(req,res)=>{
+  const character = await Character.findById(req.params.id);
+
+  if (!character) {
+    return res.status(400).send("Chracter not found....");
+  }
+
+  // Make sure user is bootcamp owner
+  if (character.user.toString() !== req.user.id) {
+      return res.status(400).send("User not Allowed to change in Character....");
+  }
+  console.log("sss",req.files);
+  if (!req.files) {
+    return res.status(400).send("Please Upload a Photo");
+  
+  }
+
+
+
+  const file = req.files.file;
+
+  // Make sure the image is a photo
+  if (!file.mimetype.startsWith('image')) {
+    return res.status(400).send("Please Upload a Image Type file");
+  }
+
+//   // Check filesize
+//   if (file.size > 400) {
+//     return next(
+//       new ErrorResponse(
+//         `Please upload an image less than ${process.env.MAX_FILE_UPLOAD}`,
+//         400
+//       )
+//     );
+//   }
+
+
+  file.mv(`./public/uploads/${file.name}`, async err => {
+    if (err) {
+      console.error(err);
+      return res.status(400).send("There is some issue in File Upload.....");
+    }
+
+      character.photos.unshift(file.name);
+    res.status(200).json({
+      success: true,
+      data: file.name
+    });
+  });
+});
+
 // @route    PUT api/characters/relation/:id
 // @desc     Add a Relation
 // @access   Private
@@ -113,21 +167,26 @@ router.put('/relation/:id', auth, checkObjectId('id'), async (req, res) => {
        
          //Pull out relation
            
-           
-                character.relations.forEach(async(relation)=>{
-                const t = await Relation.findById(relation);
+       
+               const rt = character.relations.forEach(async(relation)=>{
+                
+                    const t = await Relation.findById(relation);
                     
                 // Make sure Relation dose not exsit
-      
+       try{
                     if(t.idCharacter.toString() === req.body.idCharacter){
-                      
-                     
-                        return res.status(404).json({msg: "Relation Already exsit"});
-                         
-                    }    
+                        res.status(500).send("Relation Already exsit");
         
-                   
+                    }
+                    }catch(err){
+       
+          //  console.log(err);
+        }      
+            
+                               
             })
+                
+        
                 
         const newRelation = new Relation({
             name: req.body.name,
@@ -149,7 +208,7 @@ router.put('/relation/:id', auth, checkObjectId('id'), async (req, res) => {
     
             
               } catch (err) {
-      console.error(err);
+      //console.error(err);
       res.status(500).send('Server Error');
     }
   });

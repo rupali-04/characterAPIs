@@ -1,4 +1,6 @@
 const express = require('express'); // Express 
+var fileupload = require("express-fileupload");
+
 require("./db/mongoose");
 
 
@@ -9,6 +11,7 @@ const app = express();
 
 // middleware body parser
 app.use(express.json({extended:false}))
+app.use(fileupload());
 
 // Define Routes
 app.use('/api/users',require('./router/user'));
