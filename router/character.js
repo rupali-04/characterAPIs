@@ -23,7 +23,7 @@ check('occupation',"Occupation is required").not().isEmpty(),
 
    
         const user = await User.findById(req.user.id).select('-password');
-        console.log("Add",req.body);
+      
         const newCharacter = new Character({
             name: req.body.name,
             user: req.user.id,
@@ -115,7 +115,7 @@ router.put('/:id/photo',[auth,checkObjectId('id')],async(req,res)=>{
   if (character.user.toString() !== req.user.id) {
       return res.status(400).send("User not Allowed to change in Character....");
   }
-  console.log("sss",req.files);
+ 
   if (!req.files) {
     return res.status(400).send("Please Upload a Photo");
   
@@ -148,6 +148,7 @@ router.put('/:id/photo',[auth,checkObjectId('id')],async(req,res)=>{
     }
 
       character.photos.unshift(file.name);
+      await character.save();
     res.status(200).json({
       success: true,
       data: file.name
@@ -163,31 +164,17 @@ router.put('/relation/:id', auth, checkObjectId('id'), async (req, res) => {
         const character = await Character.findById(req.params.id);
 
 
-        const tempRel = await Relation.find({idCharacter: req.body.idCharacter});
-       
-         //Pull out relation
+        const tempRel = await Relation.find({idCharacter: req.body.idCharacter},'_id');
+        const newArr = Array.from(tempRel, (rel) => rel._id)
+        
+    
+        if(newArr.some((item) => character.relations.includes(item))){
            
-       
-               const rt = character.relations.forEach(async(relation)=>{
-                
-                    const t = await Relation.findById(relation);
-                    
-                // Make sure Relation dose not exsit
-       try{
-                    if(t.idCharacter.toString() === req.body.idCharacter){
-                        res.status(500).send("Relation Already exsit");
+
+            return res.status(400).send('Relation is Already there');
+           }     
         
-                    }
-                    }catch(err){
-       
-          //  console.log(err);
-        }      
-            
-                               
-            })
-                
-        
-                
+
         const newRelation = new Relation({
             name: req.body.name,
             idCharacter: req.body.idCharacter,
@@ -199,8 +186,7 @@ router.put('/relation/:id', auth, checkObjectId('id'), async (req, res) => {
 
         character.relations.unshift(relation);
         await character.save();
-      //  res.send(character);
-  
+
       
       
   
