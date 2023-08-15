@@ -111,7 +111,7 @@ router.put('/:id/photo',[auth,checkObjectId('id')],async(req,res)=>{
     return res.status(400).send("Chracter not found....");
   }
 
-  // Make sure user is bootcamp owner
+  // Make sure user is character owner
   if (character.user.toString() !== req.user.id) {
       return res.status(400).send("User not Allowed to change in Character....");
   }
@@ -198,6 +198,30 @@ router.put('/relation/:id', auth, checkObjectId('id'), async (req, res) => {
       res.status(500).send('Server Error');
     }
   });
+
+
+// @desc    Update character
+// @route   PUT /api/characters/:id
+// @access  Private
+
+router.put('/update/:id', auth, checkObjectId('id'), async (req, res) => {
+    try{
+        let character = await Character.findById(req.params.id);
+            if (!character) {
+                return  res.status(401).send('Character dose not exsit');
+            }
+            // Make sure user is chracter owner
+            if (character.user.toString() !== req.user.id) {
+                return  res.status(401).send('User is not owner....');
+            }
+            character = await Character.findByIdAndUpdate(req.params.id, req.body);
+            res.status(200).json({ success: true, data: character });
+        
+    }catch(err){
+            return  res.status(500).send('Server Error');
+    }
+    });
+  
   
 //   // @route    PUT api/posts/unlike/:id
 //   // @desc     Unlike a post
