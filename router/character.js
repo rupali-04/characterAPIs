@@ -94,6 +94,10 @@ router.delete('/:id',[auth,checkObjectId('id')],async(req,res)=>{
         // await character.remove();
         const deleteResult = await Character.deleteOne(character);
 
+        character.relations.find(
+                    async(relation) => await Character.deleteOne(relation)
+                  );
+
         res.json({msg: "Character removed......"});
     }catch(err){
         console.log(err.message);
