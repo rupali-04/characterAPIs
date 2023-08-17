@@ -91,10 +91,13 @@ router.delete('/:id',[auth,checkObjectId('id')],async(req,res)=>{
             return res.status(401).json({msg: "User not authorized"});
         }
 
-        // character.relations.find(
-        //     async(relation) => await Character.deleteOne(relation)
-        //   );
-        // await character.remove();
+        character.relations.forEach(
+            async(relation) => await Character.deleteOne(relation)
+        );
+        
+        //await character.remove();
+
+
         const deleteResult = await Character.deleteOne(character);
 
      
