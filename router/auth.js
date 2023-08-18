@@ -8,7 +8,7 @@ const authController = require("../controller/authController");
 
 
 //@route    GET api/auth
-//@desc     This route help us to het user from the token
+//@desc     This route help us to get user from the token
 //@access   Private
 router.get("/",auth,authController.userDetails);
 
