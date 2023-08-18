@@ -19,3 +19,29 @@ exports.generateReports = async(req, res) => {
     csvReport,
   });
 };
+
+
+exports.generateCharacterReport = async(req, res) => {
+    
+    var characterData = await Character.findById(req.params.id)
+     // Make sure user is character owner
+     if (characterData.user.toString() !== req.user.id) {
+        return res.status(400).send("User not Allowed to generate Report....");
+    }
+    var Arr = [];
+    Arr.push(characterData); 
+
+   
+  
+    // Generate PDF, Excel, and CSV reports
+  
+    const pdfReport = generatePDFReport(Arr);
+    const excelReport = generateExcelReport(Arr);
+    const csvReport = generateCSVReport(Arr);
+  
+    res.json({
+      pdfReport,
+      excelReport,
+      csvReport,
+    });
+  };
