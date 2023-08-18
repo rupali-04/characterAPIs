@@ -17,7 +17,9 @@ app.use(fileupload());
 app.use('/api/users',require('./router/user'));
 app.use('/api/auth',require('./router/auth'));
 app.use('/api/characters',require('./router/character'));
+app.use('/api/characters/report',require('./router/report'));
 //app.use('/api/relations',require('./routes/api/relation'));
+
 
 
 
