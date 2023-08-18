@@ -149,22 +149,35 @@ exports.addRelations = async (req, res) => {
            }     
         
 
-        const newRelation = new Relation({
+        const newRelation1 = new Relation({
             name: req.body.name,
             idCharacter: req.body.idCharacter,
             description: req.body.description,
         });
 
-        const relation = await newRelation.save();
-       
+        const relation1 = await newRelation1.save();
 
-        character.relations.unshift(relation);
+        const character2 = await Character.findById(req.body.idCharacter);
+        const newRelation2 = new Relation({
+            name: req.body.name,
+            idCharacter: req.params.id,
+            description: req.body.description,
+        });
+
+        const relation2 = await newRelation2.save();
+       
+        
+
+
+        character.relations.unshift(relation1);
         await character.save();
 
-      
+        character2.relations.unshift(relation2);
+        await character2.save();
+
       
   
-      return res.json(character.relations);
+      return res.json({character,character2});
     
             
               } catch (err) {
