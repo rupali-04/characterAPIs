@@ -15,13 +15,19 @@ const generatePDFReport = (characterData) => {
     doc.text(`Occupation: ${character.occupation}`);
     doc.text(`Relations: ${character.relations}`);
 
-   // doc.moveDown();
+    doc.moveDown();
 
     character.photos.forEach((pic,i)=>{
+      doc.moveDown();
+      doc.moveDown();
+
       const imagePath = `./public/uploads/${pic}`; // Update path
-      doc.image(imagePath, 100, doc.x + 15 * (i+5), { width: 20});
+      doc.image(imagePath, 100, doc.y + 2 * (i+5), { width: 50});
       doc.moveDown();
     })
+    doc.moveDown();
+    doc.moveDown();
+    doc.moveDown();
     
    
   });
