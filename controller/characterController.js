@@ -62,15 +62,27 @@ exports.deleteCharacter = async(req,res)=>{
             return res.status(401).json({msg: "User not authorized"});
         }
 
-        character.relations.forEach(
-            async(relation) => await Character.deleteOne(relation)
-        );
+        // All the Relations in Character which is deleted
+        var relationIdsToDelete = character.relations;
+
+        // All the Relations that were related to Character which is deleted
+        const tempRel = await Relation.find({idCharacter: req.params.id},'_id');
         
-        //await character.remove();
+        // Update all the Characters which has relation with the Character which is deleted
+        await Character.updateMany(
+            { relations: { $in: tempRel } },
+            { $pull: { relations: { $in: tempRel } } }
+          );
 
+        // Delete All the Relations which has characterId character that needs to be deleted
+        await Relation.deleteMany({ _id: { $in: tempRel } });
+          
+        // Delete All the relations that are peresent in the Character which is deleted
+        await Relation.deleteMany({ _id: { $in: relationIdsToDelete } });
 
-        const deleteResult = await Character.deleteOne(character);
-
+        // Delete the Character
+        await Character.deleteOne(character);
+        
      
 
         res.json({msg: "Character removed......"});
