@@ -36,7 +36,9 @@ exports.generateCharacterReport = async(req, res) => {
     // Generate PDF, Excel, and CSV reports
   
     const pdfReport = generatePDFReport(Arr);
-    const excelReport = generateExcelReport(Arr);
+    const excelReport = generateExcelReport(
+      Arr
+    );
     const csvReport = generateCSVReport(Arr);
   
     res.json({
