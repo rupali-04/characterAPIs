@@ -1,7 +1,7 @@
 const mongoose = require("mongoose"); // DATABASE CONNECTION
 
 // MongoDB Connection String
-const mongoURI = "mongodb+srv://admin:admin@cluster0.0p3aumk.mongodb.net/"
+const mongoURI = <ConnectionStringFromaAtlas>
 
 mongoose.connect(mongoURI, {
     useNewUrlParser: true,
